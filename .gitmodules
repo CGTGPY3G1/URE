@@ -1,0 +1,9 @@
+[submodule "glew"]
+	path = glew
+	url = ../../nigels-com/glew.git
+[submodule "glfw"]
+	path = glfw
+	url = ../../glfw/glfw.git
+[submodule "glm"]
+	path = glm
+	url = ../../g-truc/glm.git
