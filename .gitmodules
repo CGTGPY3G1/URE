@@ -7,3 +7,6 @@
 [submodule "packages/glfw"]
 	path = packages/glfw
 	url = ../../glfw/glfw.git
+[submodule "packages/assimp"]
+	path = packages/assimp
+	url = ../../assimp/assimp.git
