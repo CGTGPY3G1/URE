@@ -2,7 +2,7 @@
 #define UNNAMED_TEXTURE_LOADER_DEFAULT_H
 
 #include "TextureLoader.h"
-
+#include <string>
 namespace B00289996 {
 	class TextureLoaderDefault : public TextureLoader {
 	public:

@@ -1,5 +1,6 @@
 #include "TextureLoaderDefault.h"
-#include "3rdParty/stb/stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "3rdParty\stb\stb_image.h"
 #include "Texture.h"
 #include <iostream>
 namespace B00289996 {
@@ -7,7 +8,7 @@ namespace B00289996 {
 	}
 
 	void TextureLoaderDefault::GetTextureData(const std::string & filePath, unsigned char ** dataStorage, std::int32_t & width, std::int32_t & height, std::int32_t & channels, std::uint32_t & size) const {
-		*dataStorage = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+		*dataStorage = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_default);
 		size = width * height * channels;
 		if (dataStorage == nullptr) std::cout << stbi_failure_reason() << std::endl;
 	}

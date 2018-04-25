@@ -1,24 +1,11 @@
-[submodule "packages/glm"]
-	path = packages/glm
-	url = ../../g-truc/glm.git
-[submodule "packages/glew"]
-	path = packages/glew
-	url = ../../nigels-com/glew.git
-[submodule "packages/glfw"]
-	path = packages/glfw
-	url = ../../glfw/glfw.git
-[submodule "packages/assimp"]
-	path = packages/assimp
-	url = ../../assimp/assimp.git
-[submodule "external/glew"]
-	path = external/glew
-	url = ../../nigels-com/glew.git
+
 [submodule "external/glfw"]
 	path = external/glfw
 	url = ../../glfw/glfw.git
 [submodule "external/glm"]
 	path = external/glm
 	url = ../../g-truc/glm.git
-[submodule "external/assimp"]
-	path = external/assimp
-	url = ../../assimp/assimp.git
+
+[submodule "external/glew-cmake"]
+	path = external/glew-cmake
+	url = ../../Perlmint/glew-cmake.git

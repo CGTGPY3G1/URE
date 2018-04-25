@@ -5,7 +5,6 @@
 #include <vector>
 #include <unordered_map>
 #include <glm/mat4x4.hpp>
-#include <spirv_cross/spirv_cross.hpp>
 namespace B00289996 {
 	struct VulkanVertexAttributes {
 		vk::PipelineVertexInputStateCreateInfo inputState;

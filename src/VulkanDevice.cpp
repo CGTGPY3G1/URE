@@ -10,7 +10,6 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
-#include <spirv_cross/spirv_glsl.hpp>
 
 namespace B00289996 {
 	VulkanDevice::VulkanDevice() :std::enable_shared_from_this<VulkanDevice>() {
@@ -351,22 +350,7 @@ namespace B00289996 {
 		
 		return rgba ? vk::Format::eAstc8x8UnormBlock : vk::Format::eAstc8x6UnormBlock;
 	}
-	vk::ShaderStageFlagBits GetVulkanStageFlags(const spv::ExecutionModel & model) {
-		switch (model) {
-		case spv::ExecutionModelVertex:
-			return vk::ShaderStageFlagBits::eVertex;
-		case spv::ExecutionModelFragment:
-			return vk::ShaderStageFlagBits::eFragment;
-		case spv::ExecutionModelGeometry:
-			return vk::ShaderStageFlagBits::eGeometry;;
-		case spv::ExecutionModelGLCompute:
-		case spv::ExecutionModelKernel:
-			return vk::ShaderStageFlagBits::eCompute;
-		default:
-			break;
-		}
-		return vk::ShaderStageFlagBits::eAll;
-	}
+
 	std::shared_ptr<VulkanShader> VulkanDevice::CreateShaderDesciptions(const std::shared_ptr<ShaderProgram> & shader) {
 		std::shared_ptr<VulkanShader> toReturn;
 		std::uint32_t id = shader->GetID();
@@ -377,7 +361,7 @@ namespace B00289996 {
 			//std::vector<std::vector<vk::DescriptorSetLayoutBinding>> slb;
 			for (std::size_t i = 0; i < shaders.size(); i++) {
 				Shader s = shaders[i];
-				std::string location = "Shaders/Vulkan/" + s.name + "." + (s.type == ShaderType::VERTEX_SHADER ? "vert.spv" : "frag.spv");
+				std::string location = "../assets/Shaders/Vulkan/" + s.name + "." + (s.type == ShaderType::VERTEX_SHADER ? "vert.spv" : "frag.spv");
 				std::ifstream file(location, std::ios::binary | std::ios::ate);
 				std::streamsize vertSize = file.tellg();
 				file.seekg(0, std::ios::beg);

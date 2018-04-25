@@ -7,7 +7,7 @@
 #include "ShaderProgram.h"
 namespace B00289996 {
 	MeshRenderer::MeshRenderer() : Component(), originalAABB(AABB()), transformedAABB(AABB()), originalSphere(), transformedSphere(),
-		meshes(std::vector<std::shared_ptr<Mesh>>()), materials(std::vector<Material>()), dirtyTransform(true), dirtyVertices(false), registeredWithCulling(false) {
+		meshes(std::vector<std::shared_ptr<Mesh>>()), materials(std::vector<Material>()), dirtyTransform(true), dirtyVertices(true), registeredWithCulling(false) {
 	}
 
 	MeshRenderer::~MeshRenderer() {

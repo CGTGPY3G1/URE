@@ -9,6 +9,8 @@
 #include "Input.h"
 #include "Texture.h"
 #include <functional>
+
+
 namespace B00289996 {
 	constexpr uint32_t MAX_LIGHTS = 10, MAX_TEXTURES = 50;// , MAX_BONE_WEIGHTS = 4, MAX_BONES = 128;
 	class Node;

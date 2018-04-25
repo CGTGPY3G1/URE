@@ -2,7 +2,7 @@
 #include "IDGenerator.h"
 namespace B00289996 {
 
-	Mesh::Mesh(const std::string & name) : RenderableResource(), meshName(name), dirty(false), vertices(std::vector<Vertex>()), indices(std::vector<std::uint32_t>()), useBoneData(false){
+	Mesh::Mesh(const std::string & name) : RenderableResource(), meshName(name), dirty(true), vertices(std::vector<Vertex>()), indices(std::vector<std::uint32_t>()), useBoneData(false), offset(glm::mat4(1.0f)){
 		id = IDGenerator<Mesh, std::uint16_t>::GetInstance().GetNewID();
 	}
 

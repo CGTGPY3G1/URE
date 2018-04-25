@@ -174,7 +174,6 @@ namespace B00289996 {
 			}
 			//debugDraw.Render(cam->GetViewProjection());
 		}
-		
 	}
 
 	void RendererOpenGL3::BeginRendering() {

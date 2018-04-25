@@ -260,14 +260,13 @@ namespace B00289996 {
 
 	std::shared_ptr<Node> FileInput::LoadModel(const std::string & directory, const std::string & fileName, const bool & singleInstance, const bool & flipWinding) {
 		std::shared_ptr<Node> toReturn = std::shared_ptr<Node>();
-		const std::string filePath = directory + "/" + fileName;
+		const std::string filePath = "../assets/" + directory + "/" + fileName;
 		if (!FileExists(filePath)) {
 			std::cout << "File " << filePath << " Doesn't exist!" << std::endl;
 		}
 		else {
 			
 			Assimp::Importer importer;
-			;
 			bool store = false;
 			//importer.SetPropertyInteger(AI_CONFIG_PP_SBBC_MAX_BONES, 4);
 			if (loadedModels.count(filePath) != 0) {
@@ -305,7 +304,7 @@ namespace B00289996 {
 
 	std::shared_ptr<Node> FileInput::LoadAnimatedModel(const std::string & directory, const std::string & fileName, const bool & flipWinding) {
 		std::shared_ptr<Node> toReturn;
-		std::shared_ptr<AnimatedModel> model = std::make_shared<AnimatedModel>(directory, fileName, flipWinding);
+		std::shared_ptr<AnimatedModel> model = std::make_shared<AnimatedModel>("../assets/" + directory, fileName, flipWinding);
 		const aiScene * scene = model->GetScene();
 		if (scene && scene->mRootNode) {
 			aiNode * node = scene->mRootNode;
@@ -332,7 +331,7 @@ namespace B00289996 {
 	std::shared_ptr<Texture> FileInput::LoadTexture(const std::string & directory, const std::string & fileName, const TextureType & type) {
 		std::shared_ptr<Texture> toReturn = std::shared_ptr<Texture>();
 
-		const std::string filePath = directory + "/" + fileName;
+		const std::string filePath = "../assets/" + directory + "/" + fileName;
 		if (!FileExists(filePath)) {
 			std::cout << "File " << filePath << " Doesn't exist!" << std::endl;
 			return toReturn;
@@ -353,8 +352,8 @@ namespace B00289996 {
 					toReturn->channels = (std::size_t)std::max(0, channels);
 					toReturn->dataSize = size;
 					toReturn->textureData = imageData;
-					const bool validTexture = imageData == nullptr;
-					if (validTexture) std::cout << "Image Data is Null" << std::endl;
+					const bool validTexture = imageData != nullptr;
+					if (!validTexture) std::cout << "Image Data is Null" << std::endl;
 					else {
 						std::cout << "Loaded texture " << fileName << std::endl;
 						Event e = Event(EventType::EVENT_TYPE_REGISTER, EventTarget::TARGET_RENDERING_SYSTEM, EventPriority::EVENT_SEND_IMMEDIATELY, EventDataType::EVENT_DATA_TEXTURE, std::any(ObjectContainer<std::shared_ptr<Texture>>(toReturn)));

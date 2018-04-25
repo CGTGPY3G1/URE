@@ -235,7 +235,7 @@ namespace B00289996 {
 				std::vector<Shader> shaders = shader->GetShaders();
 				for (size_t i = 0; i < shaders.size(); i++) {
 					Shader s = shaders[i];
-					std::string location = "Shaders/OpenGL3/" + s.name + "." + (s.type == ShaderType::VERTEX_SHADER ? "vert" : "frag");
+					std::string location = "../assets/Shaders/OpenGL3/" + s.name + "." + (s.type == ShaderType::VERTEX_SHADER ? "vert" : "frag");
 					std::string source = TextParser::ReadFile(location);
 					if (source.empty()) {
 						Debug::PrintImmediately("Invalid Shader Source - " + location, DebugMessageType::DEBUG_TYPE_FAILURE_CRITICAL);
@@ -285,6 +285,7 @@ namespace B00289996 {
 					PrintShaderError(id, "Couldn't link shader :");
 					return (GLuint)0;
 				}
+				else std::cout << "shader " << shaderProgram << " loaded" << std::endl;
 				for (std::vector<GLuint>::iterator i = shaderIDs.begin(); i != shaderIDs.end(); ++i) glDetachShader(shaderProgram, (*i));
 				glUseProgram(shaderProgram);
 				toReturn = shaderProgram;

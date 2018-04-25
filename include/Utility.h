@@ -61,10 +61,6 @@ namespace B00289996 {
 		return glm::vec2(toConvert.x, toConvert.y);
 	}
 	static void PrintAIMat4(const aiMatrix4x4 & toPrint) {
-		glm::mat4x4 toReturn;
-		/*assert(sizeof(toReturn) == sizeof(toConvert));
-		memcpy(&toReturn, &toConvert, sizeof(toConvert));*/
-		//return glm::transpose(toReturn);
 		std::cout << toPrint.a1 << "  " << toPrint.b1 << "  " << toPrint.c1 << "  " << toPrint.d1 << std::endl;
 		std::cout << toPrint.a2 << "  " << toPrint.b2 << "  " << toPrint.c2 << "  " << toPrint.d2 << std::endl;
 		std::cout << toPrint.a3 << "  " << toPrint.b3 << "  " << toPrint.c3 << "  " << toPrint.d3 << std::endl;

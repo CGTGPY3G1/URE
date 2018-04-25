@@ -1,6 +1,6 @@
+#include "Engine.h"
 #include "Node.h"
 #include "TypeInfo.h"
-#include <iostream>
 #include "Camera.h"
 #include "Geometry.h"
 #include "TypeInfo.h"
@@ -8,13 +8,12 @@
 #include "IDGenerator.h"
 #include "FileInput.h"
 #include "Emitter.h"
-#include "Engine.h"
 #include "MeshRenderer.h"
 #include "Light.h"
 #include "Debug.h"
 #include <glm/gtx/string_cast.hpp>
 #include "Animator.h"
-
+#include <iostream>
 
 using namespace B00289996;
 float RandomFloat(float a, float b) {

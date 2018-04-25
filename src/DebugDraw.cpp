@@ -122,7 +122,7 @@ namespace B00289996 {
 
 	DebugDraw::DebugDraw() : VAO(0), positionBuffer(0), colourBuffer(0), noOfVerts(0), verts(std::vector<glm::vec3>()), colours(std::vector<glm::vec3>()) {
 		glLineWidth(2);
-		shaderID = LoadShader("Shaders\\OpenGL3\\basic.vert", "Shaders\\OpenGL3\\basic.frag");
+		shaderID = LoadShader("../assets/Shaders/OpenGL3\\basic.vert", "../assets/Shaders/OpenGL3/basic.frag");
 	}
 
 	void DebugDraw::Init() {
