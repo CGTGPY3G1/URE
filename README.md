@@ -1,6 +1,6 @@
 # URE (Unnamed Rendering Engine)
 An OpenGL / Vulkan rendering engine which is nowhere near complete (for now at least).  
-requires a graphics card which facilitate using 256 bytes of push constant data (was tested using a GTX 1060).
+Requires a graphics card which facilitate using 256 bytes of push constant data (was tested using a GTX 1060) and a C++17 compatible compiler (with C++17 features enabled).
 
 # Building
 Install Vulkan (preferably 1.0.65.1 or higher).  
