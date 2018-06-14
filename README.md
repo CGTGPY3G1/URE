@@ -3,7 +3,7 @@ An OpenGL / Vulkan rendering engine which is nowhere near complete (for now at l
 
 # Building
 Install Vulkan (preferably 1.0.65.1 or higher).  
-Clone the repo (including submodules)
+Clone the repo (including submodules)  
 Build using cmake.  
 Assimp (the engine uses 4.0.1) must be integrated manually due to its abnormal cmake set-up.  This will be added to the build hierarchy soon (hopefully) but until then get it from https://github.com/assimp/assimp/releases, build it, and include it in the project.
 
