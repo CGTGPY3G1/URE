@@ -15,7 +15,7 @@ namespace B00289996 {
 			glDeleteBuffers(1, &meshBuffers[id].first);
 			glDeleteBuffers(1, &meshBuffers[id].second);
 			glDeleteVertexArrays(1, &id);
-			
+
 		}
 		for (std::unordered_map<std::uint16_t, GLuint>::iterator i = textures.begin(); i != textures.end(); ++i) {
 			glDeleteTextures(1, &(*i).second);
@@ -25,7 +25,7 @@ namespace B00289996 {
 		}
 	}
 
-	GLuint ContextManagerOpenGL3::GetTextureID(const std::shared_ptr<Texture>& texture)  {
+	GLuint ContextManagerOpenGL3::GetTextureID(const std::shared_ptr<Texture>& texture) {
 		const std::uint16_t id = texture->GetID();
 		if (textures.count(id) > 0) return textures[id];
 		return LoadTexture(texture);
@@ -107,7 +107,7 @@ namespace B00289996 {
 	}
 
 	GLuint ContextManagerOpenGL3::LoadTexture(const std::shared_ptr<Texture>& texture) {
-		if (!texture)  {
+		if (!texture) {
 			std::cout << "Null Texture sent to ContextManager" << std::endl;
 			return (GLuint)0;
 		}
@@ -196,7 +196,7 @@ namespace B00289996 {
 			}
 			else std::cout << "Mesh " << mesh->GetID() << " is invalid " << std::endl;
 		}
-		
+
 		return toReturn;
 	}
 
@@ -285,7 +285,6 @@ namespace B00289996 {
 					PrintShaderError(id, "Couldn't link shader :");
 					return (GLuint)0;
 				}
-				else std::cout << "shader " << shaderProgram << " loaded" << std::endl;
 				for (std::vector<GLuint>::iterator i = shaderIDs.begin(); i != shaderIDs.end(); ++i) glDetachShader(shaderProgram, (*i));
 				glUseProgram(shaderProgram);
 				toReturn = shaderProgram;
