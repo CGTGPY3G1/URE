@@ -9,3 +9,6 @@
 [submodule "external/glew-cmake"]
 	path = external/glew-cmake
 	url = ../../Perlmint/glew-cmake.git
+[submodule "external/assimp"]
+	path = external/assimp
+	url = https://github.com/assimp/assimp.git
