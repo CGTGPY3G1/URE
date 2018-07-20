@@ -172,7 +172,8 @@ namespace B00289996 {
 	}
 
 	const glm::vec3 Transformable::TransformToLocalNormal(const glm::vec3 & normal) {
-		return TransformToLocalNormal(normal);
+		UpdateTransform();
+		return TransformToLocalNormal(normal.x, normal.y, normal.z);
 	}
 
 	const glm::vec3 Transformable::TransformToLocalNormal(const float & x, const float & y, const float & z) {
