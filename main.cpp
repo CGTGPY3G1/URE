@@ -107,11 +107,11 @@ int main(int argc, char *argv[]) {
 		}		
 	}
 	
-	std::shared_ptr<Node> goblin = engine.LoadAnimatedModel("Models", "goblin.dae");
+	/*std::shared_ptr<Node> goblin = engine.LoadAnimatedModel("Models", "goblin.dae");
 	std::shared_ptr<Animator> animator = FindAnimator(goblin);
 	if (animator) animator->SetBoneOffset(glm::vec3(0.0f, 1750.0f, 0.0f));
 	goblin->SetPosition(0.0f, 0.0f, -30.0f);
-	goblin->Scale(0.1f);
+	goblin->Scale(0.1f);*/
 
 
 	std::shared_ptr<Node> globe = engine.LoadModel("Models", "globe.dae");

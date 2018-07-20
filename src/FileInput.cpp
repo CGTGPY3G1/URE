@@ -265,15 +265,15 @@ namespace B00289996 {
 			std::cout << "File " << filePath << " Doesn't exist!" << std::endl;
 		}
 		else {
-			
-			Assimp::Importer importer;
+			//Assimp::Importer importer;
+
 			bool store = false;
 			//importer.SetPropertyInteger(AI_CONFIG_PP_SBBC_MAX_BONES, 4);
 			if (loadedModels.count(filePath) != 0) {
-				importer = loadedModels[filePath];
-				const aiScene *scene = importer.GetScene();
+				loadedModels[filePath];
+				const aiScene *scene = loadedModels[filePath].GetScene();
 				if (!scene) {
-					std::cout << "Unable to load model: " << importer.GetErrorString() << std::endl;
+					std::cout << "Unable to load model: " << loadedModels[filePath].GetErrorString() << std::endl;
 				}
 				else {
 					if (scene->HasAnimations()) toReturn = LoadAnimatedModel(directory, fileName, flipWinding);
@@ -281,19 +281,18 @@ namespace B00289996 {
 				}
 			}
 			else {
-				importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_CAMERAS | aiComponent_LIGHTS);
+				loadedModels[filePath].SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_CAMERAS | aiComponent_LIGHTS);
 				unsigned int flags = aiProcess_SortByPType | aiProcess_FindInvalidData | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace | aiProcess_ImproveCacheLocality | aiProcess_GenSmoothNormals;
 				if (flipWinding) flags |= aiProcess_FlipWindingOrder;
-				const aiScene *scene = importer.ReadFile(filePath, flags);
-				if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE) std::cout << importer.GetErrorString() << std::endl;
+				const aiScene *scene = loadedModels[filePath].ReadFile(filePath, flags);
+				if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE) std::cout << loadedModels[filePath].GetErrorString() << std::endl;
 
 				if (!scene) {
-					std::cout << "Unable to load model: " << importer.GetErrorString() << std::endl;
+					std::cout << "Unable to load model: " << loadedModels[filePath].GetErrorString() << std::endl;
 				}
 				else {
 					if (scene->HasAnimations()) toReturn = LoadAnimatedModel(directory, fileName, flipWinding);
 					else toReturn = ProcessScene(directory, fileName, scene);
-					if (store) loadedModels[filePath] = importer;
 				}
 			}
 			
