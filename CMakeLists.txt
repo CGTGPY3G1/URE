@@ -51,6 +51,7 @@ set(URE_HEADERS
 	./include/ContextManager.h
 	./include/ContextManagerOpenGL3.h
 	./include/ContextManagerVulkan.h
+	./include/CullingResult.h
 	./include/CullingSystem.h
 	./include/Debug.h
 	./include/DebugDraw.h
