@@ -3,7 +3,6 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <map>
 #include "Transformable.h"
 #include "TypeInfo.h"
 #include "BitMask.h"
@@ -42,15 +41,16 @@ namespace B00289996 {
 	private:
 		std::string name;
 		BitMask bitmask;
-		std::map<std::size_t, std::vector<std::shared_ptr<Component>>> components;
+		std::vector<std::vector<std::shared_ptr<Component>>> components;
 	};
 
 	template<typename T>
 	inline std::shared_ptr<T> Node::GetComponent() {
 		static BitMask id = TypeInfo::GetComponentID<T>();
-		if (components.count(id.AsNumber()) > 0) {
-			std::shared_ptr<Component> c = components[id.AsNumber()].front();
-			if (c) return std::static_pointer_cast<T>(c);
+		const unsigned int index = id.RelevantBit();
+		if (bitmask.Contains(id)) {
+			std::shared_ptr<Component> c = components[index].front();
+			if (c) return std::static_pointer_cast<T>(c);	
 		}
 		return std::shared_ptr<T>();
 	}
@@ -59,8 +59,9 @@ namespace B00289996 {
 	inline std::vector<std::shared_ptr<T>> Node::GetComponents() {
 		static BitMask id = TypeInfo::GetComponentID<T>();
 		std::vector<std::shared_ptr<T>> toReturn = std::vector<std::shared_ptr<T>>();
-		if (components.count(id.AsNumber()) > 0) {
-			std::vector<std::shared_ptr<Component>> c = components[id.AsNumber()];
+		if (bitmask.Contains(id)) {
+			const unsigned int index = id.RelevantBit();
+			std::vector<std::shared_ptr<Component>> c = components[index];
 			for (std::vector<std::shared_ptr<Component>>::iterator i = c.begin(); i != c.end(); ++i) {
 				toReturn.push_back(std::static_pointer_cast<T>(*i));
 			}
@@ -72,8 +73,11 @@ namespace B00289996 {
 	inline std::shared_ptr<T> Node::AddComponent(const std::shared_ptr<T> component) {
 		static BitMask id = TypeInfo::GetComponentID<T>();
 		std::shared_ptr<Node> me = std::static_pointer_cast<Node>(shared_from_this());
-		
-		components[id.AsNumber()].push_back(std::static_pointer_cast<Component>(component));
+		unsigned int index = id.RelevantBit();
+		if (index >= components.size()) {
+			components.resize(index + 1);
+		}
+		components[index].push_back(std::static_pointer_cast<Component>(component));
 		component->SetOwner(me);
 		bitmask |= id;
 		if (!componentsDirty) componentsDirty = true;

@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "TypeInfo.h"
 #include "ContextManagerVulkan.h"
+#include "CullingResult.h"
 #include <iostream>
 
 namespace B00289996 {
@@ -16,76 +17,71 @@ namespace B00289996 {
 	}
 	RendererVulkan::~RendererVulkan() {
 	}
-	void RendererVulkan::Render(const std::vector<std::shared_ptr<Node>>& objects) {
+	void RendererVulkan::Render(const std::vector<CullingResult> & cullingResults) {
 		if (!this->contextManager) {
 			std::cout << "No context manager attached to RendererOpenGL3" << std::endl;
 			return;
 		}
 		std::shared_ptr<ContextManagerVulkan> context = std::static_pointer_cast<ContextManagerVulkan>(this->contextManager);
-		std::vector<std::shared_ptr<Node>> renderables;
-		std::vector<std::shared_ptr<Node>> lights;
-		std::vector<std::shared_ptr<Node>> cameras;
-		const BitMask mRenderBitmask = TypeInfo::GetComponentID<MeshRenderer>();
-		const BitMask mCameraBitmask = TypeInfo::GetComponentID<Camera>();
-		const BitMask mLightBitmask = TypeInfo::GetComponentID<Light>();
-		for (std::vector<std::shared_ptr<Node>>::const_iterator i = objects.begin(); i < objects.end(); i++) {
-			const std::shared_ptr<Node> object = (*i);
-			if (object->HasAnyOfComponents(mRenderBitmask)) renderables.push_back(object);
-			if (object->HasAnyOfComponents(mCameraBitmask)) cameras.push_back(object);
-			if (object->HasAnyOfComponents(mLightBitmask)) lights.push_back(object);
-		}
-		const bool useLights = !lights.empty(), hasCamera = !cameras.empty(), objectsToRender = !renderables.empty();
-		/*if (!hasCamera) {
-			std::cout << "No Cameras found in render list" << std::endl;
-		}
-		if (!objectsToRender) {
-			std::cout << "Nothing to Render" << std::endl;
-		}
-		if (!useLights) std::cout << "No Lights to Render" << std::endl;*/
+		for (std::vector<CullingResult>::const_iterator i = cullingResults.begin(); i < cullingResults.end(); i++) {
 
-		if (hasCamera && objectsToRender) {
-			UniformVP vp;
-			
-			vp.viewProjection = vulkanPerspectiveClip * cameras[0]->GetComponent<Camera>()->GetProjection() * cameras[0]->GetComponent<Camera>()->GetView();
-			vp.viewPosition = cameras[0]->GetComponent<Camera>()->GetPosition();
 
-			std::shared_ptr<ShaderProgram> shaderProgram;
-			std::shared_ptr<Texture> texture;
-			Viewport v = cameras[0]->GetComponent<Camera>()->GetViewport();
-			context->UpdateViewport(v.min.x, v.min.y, v.max.x, v.max.y);
-			std::vector<std::shared_ptr<Node>> batch;
-			//std::vector<std::shared_ptr<VulkanVAO>> vaos;
-			for (std::vector<std::shared_ptr<Node>>::iterator i = renderables.begin(); i != renderables.end(); ++i) {
-				std::shared_ptr<Node> node = (*i);
-				std::shared_ptr<MeshRenderer> meshRenderer = node->GetComponent<MeshRenderer>();
-				if (meshRenderer) {
-					std::uint32_t meshCount = 0;
-					std::vector<std::shared_ptr<Mesh>> meshes = meshRenderer->GetMeshes();
-					for (std::vector<std::shared_ptr<Mesh>>::iterator j = meshes.begin(); j != meshes.end(); ++j) {
-						const Material material = meshRenderer->GetMaterial(meshCount);
-						std::shared_ptr<ShaderProgram> shader = material.GetShader();
+			std::vector<std::shared_ptr<Node>> renderables = (*i).visibleNodes;
+			std::vector<std::shared_ptr<Node>> lights = (*i).lights;
+			std::shared_ptr<Node> camera = (*i).camera;
 
-						if (shader) {
-							if (shaderProgram != shader) {
-								shaderProgram = shader;
-								context->BindLights(shaderProgram, lights);
-								//context->BindViewProjection(shaderProgram, vp);
-								context->BindShader(shaderProgram);
+			const bool useLights = !lights.empty(), hasCamera = camera.use_count() > 0, objectsToRender = !renderables.empty();
+			/*if (!hasCamera) {
+				std::cout << "No Cameras found in render list" << std::endl;
+			}
+			if (!objectsToRender) {
+				std::cout << "Nothing to Render" << std::endl;
+			}
+			if (!useLights) std::cout << "No Lights to Render" << std::endl;*/
+
+			if (hasCamera && objectsToRender) {
+				UniformVP vp;
+				std::shared_ptr<Camera> cam = camera->GetComponent<Camera>();
+				vp.viewProjection = vulkanPerspectiveClip * cam->GetProjection() * cam->GetView();
+				vp.viewPosition = camera->GetComponent<Camera>()->GetPosition();
+
+				std::shared_ptr<ShaderProgram> shaderProgram;
+				std::shared_ptr<Texture> texture;
+				Viewport v = cam->GetViewport();
+				context->UpdateViewport(v.min.x, v.min.y, v.max.x, v.max.y);
+				std::vector<std::shared_ptr<Node>> batch;
+				//std::vector<std::shared_ptr<VulkanVAO>> vaos;
+				for (std::vector<std::shared_ptr<Node>>::iterator i = renderables.begin(); i != renderables.end(); ++i) {
+					std::shared_ptr<Node> node = (*i);
+					std::shared_ptr<MeshRenderer> meshRenderer = node->GetComponent<MeshRenderer>();
+					if (meshRenderer) {
+						std::uint32_t meshCount = 0;
+						std::vector<std::shared_ptr<Mesh>> meshes = meshRenderer->GetMeshes();
+						for (std::vector<std::shared_ptr<Mesh>>::iterator j = meshes.begin(); j != meshes.end(); ++j) {
+							const Material material = meshRenderer->GetMaterial(meshCount);
+							std::shared_ptr<ShaderProgram> shader = material.GetShader();
+
+							if (shader) {
+								if (shaderProgram != shader) {
+									shaderProgram = shader;
+									context->BindLights(shaderProgram, lights);
+									//context->BindViewProjection(shaderProgram, vp);
+									context->BindShader(shaderProgram);
+								}
 							}
 						}
 					}
+					batch.push_back(node);
 				}
-				batch.push_back(node);
+
+				context->RenderBatch(shaderProgram, vp, batch, texture, lights);
+
 			}
-
-			context->RenderBatch(shaderProgram, vp, batch, texture, lights);
-
+			else {
+				UniformVP tempVP;
+				context->RenderBatch(std::shared_ptr<ShaderProgram>(), tempVP, std::vector<std::shared_ptr<Node>>(), std::shared_ptr<Texture>());
+			}
 		}
-		else {
-			UniformVP tempVP;
-			context->RenderBatch(std::shared_ptr<ShaderProgram>(), tempVP, std::vector<std::shared_ptr<Node>>(), std::shared_ptr<Texture>());
-		}
-		
 	}
 
 	void RendererVulkan::BeginRendering() {

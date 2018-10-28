@@ -14,6 +14,7 @@
 #include "Engine.h"
 #include "Animator.h"
 #include "AnimatedModel.h"
+#include "CullingResult.h"
 
 namespace B00289996 {
 	RendererOpenGL3::RendererOpenGL3() : Renderer(std::make_shared<ContextManagerOpenGL3>()){
@@ -30,149 +31,144 @@ namespace B00289996 {
 		}
 	}
 
-	void RendererOpenGL3::Render(const std::vector<std::shared_ptr<Node>> & objects) {
+	void RendererOpenGL3::Render(const std::vector<CullingResult> & cullingResults) {
 		
 		if (!this->contextManager) {
 			std::cout << "No context manager attached to RendererOpenGL3" << std::endl;
 			return;
 		}
 		std::shared_ptr<ContextManagerOpenGL3> context = std::static_pointer_cast<ContextManagerOpenGL3>(this->contextManager);
-		
-		std::vector<std::shared_ptr<Node>> renderables;
-		std::vector<std::shared_ptr<Node>> lights;
-		std::vector<std::shared_ptr<Node>> cameras;
-		const BitMask mRenderBitmask = TypeInfo::GetComponentID<MeshRenderer>();
-		const BitMask mCameraBitmask = TypeInfo::GetComponentID<Camera>();
-		const BitMask mLightBitmask = TypeInfo::GetComponentID<Light>();
-		for (std::vector<std::shared_ptr<Node>>::const_iterator i = objects.begin(); i < objects.end(); i++) {
-			const std::shared_ptr<Node> object = (*i);
-			if (object->HasAnyOfComponents(mRenderBitmask)) renderables.push_back(object);
-			if (object->HasAnyOfComponents(mCameraBitmask)) cameras.push_back(object);
-			if (object->HasAnyOfComponents(mLightBitmask)) lights.push_back(object);
-		}
-		const bool useLights = !lights.empty(), hasCamera = !cameras.empty(), objectsToRender = !renderables.empty();
-		/*if (!hasCamera) {
-			std::cout << "No Cameras found in render list" << std::endl;
-		}
-		if (!objectsToRender) {
-			std::cout << "Nothing to Render" << std::endl;
-		}
-		if (!useLights) std::cout << "No Lights to Render" << std::endl;*/
+		for (std::vector<CullingResult>::const_iterator i = cullingResults.begin(); i < cullingResults.end(); i++) {
 
 
-		
-		if (hasCamera && objectsToRender) {
-			
-			std::shared_ptr<Camera> cam = cameras[0]->GetComponent<Camera>();
-			Viewport viewport = cam->GetViewport();
+			std::vector<std::shared_ptr<Node>> renderables = (*i).visibleNodes;
+			std::vector<std::shared_ptr<Node>> lights = (*i).lights;
+			std::shared_ptr<Node> camera = (*i).camera;
 
-			glViewport((GLsizei)(viewport.min.x * Engine::GetInstance().GetWindowWidth()), (GLsizei)(viewport.min.y * Engine::GetInstance().GetWindowHeight()), (GLsizei)((viewport.max.x - viewport.min.x) * Engine::GetInstance().GetWindowWidth()), (GLsizei)((viewport.max.y - viewport.min.y) * Engine::GetInstance().GetWindowHeight()));
-			glm::mat4 view = cam->GetView();
-			glm::mat4 projection = cam->GetProjection();
-			GLuint shaderID = 0, textureID = 0, meshID = 0;
-			bool useTextures = false;
+			const bool useLights = !lights.empty(), hasCamera = camera.use_count() > 0, objectsToRender = !renderables.empty();
+			/*if (!hasCamera) {
+				std::cout << "No Cameras found in render list" << std::endl;
+			}
+			if (!objectsToRender) {
+				std::cout << "Nothing to Render" << std::endl;
+			}
+			if (!useLights) std::cout << "No Lights to Render" << std::endl;*/
 
-			for (std::vector<std::shared_ptr<Node>>::iterator i = renderables.begin(); i != renderables.end(); ++i) {
-				std::shared_ptr<Node> node = (*i);
 
-				std::shared_ptr<MeshRenderer> meshRenderer = node->GetComponent<MeshRenderer>();
-				if (meshRenderer) {
-					std::uint32_t meshCount = 0;
-					std::vector<std::shared_ptr<Mesh>> meshes = meshRenderer->GetMeshes();
-					for (std::vector<std::shared_ptr<Mesh>>::iterator j = meshes.begin(); j != meshes.end(); ++j) {
-						//debugDraw.DrawOBB(meshRenderer->GetOBB());
-					//	debugDraw.DrawSphere(meshRenderer->GetSphere());
-						const Material material = meshRenderer->GetMaterial(meshCount);
-						std::shared_ptr<ShaderProgram> shader = material.GetShader();
-						if (shader) {
-							const GLuint sID = context->GetShaderID(shader);
-							bool nullShader = shaderID == 0;
-							if (sID != shaderID) {
-								shaderID = sID;
-								glUseProgram(shaderID);
-								nullShader = shaderID == 0;
-							}
-							GLint location = -1;
-							if (!nullShader) {
-								SetCameraUniforms(shaderID, view, projection, cam->GetPosition());
-								SetLightingUniforms(shaderID, lights);
-								std::shared_ptr<Mesh> mesh = meshRenderer->GetMesh(meshCount);
-								std::shared_ptr<Animator> animator = node->GetComponent<Animator>();
-								if (animator) {
-//									std::shared_ptr<BoneTransformTree> boneTree = animator->GetBoneTransformTree();
-//									if (boneTree) DebugRenderBoneTree(boneTree, node->GetWorldTransform());
 
-									std::vector<glm::mat4> b = animator->GetBoneMatrices();
-									for (size_t i = 0; i < b.size(); i++) {
-										location = glGetUniformLocation(shaderID, (std::string("bones[") + std::to_string(i) + std::string("]")).c_str());
-										if (location >= 0) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(b[i]));
+			if (hasCamera && objectsToRender) {
+
+				std::shared_ptr<Camera> cam = camera->GetComponent<Camera>();
+				Viewport viewport = cam->GetViewport();
+
+				glViewport((GLsizei)(viewport.min.x * Engine::GetInstance().GetWindowWidth()), (GLsizei)(viewport.min.y * Engine::GetInstance().GetWindowHeight()), (GLsizei)((viewport.max.x - viewport.min.x) * Engine::GetInstance().GetWindowWidth()), (GLsizei)((viewport.max.y - viewport.min.y) * Engine::GetInstance().GetWindowHeight()));
+				glm::mat4 view = cam->GetView();
+				glm::mat4 projection = cam->GetProjection();
+				GLuint shaderID = 0, textureID = 0, meshID = 0;
+				bool useTextures = false;
+
+				for (std::vector<std::shared_ptr<Node>>::iterator i = renderables.begin(); i != renderables.end(); ++i) {
+					std::shared_ptr<Node> node = (*i);
+
+					std::shared_ptr<MeshRenderer> meshRenderer = node->GetComponent<MeshRenderer>();
+					if (meshRenderer) {
+						std::uint32_t meshCount = 0;
+						std::vector<std::shared_ptr<Mesh>> meshes = meshRenderer->GetMeshes();
+						for (std::vector<std::shared_ptr<Mesh>>::iterator j = meshes.begin(); j != meshes.end(); ++j) {
+							//debugDraw.DrawOBB(meshRenderer->GetOBB());
+						//	debugDraw.DrawSphere(meshRenderer->GetSphere());
+							const Material material = meshRenderer->GetMaterial(meshCount);
+							std::shared_ptr<ShaderProgram> shader = material.GetShader();
+							if (shader) {
+								const GLuint sID = context->GetShaderID(shader);
+								bool nullShader = shaderID == 0;
+								if (sID != shaderID) {
+									shaderID = sID;
+									glUseProgram(shaderID);
+									nullShader = shaderID == 0;
+								}
+								GLint location = -1;
+								if (!nullShader) {
+									SetCameraUniforms(shaderID, view, projection, cam->GetPosition());
+									SetLightingUniforms(shaderID, lights);
+									std::shared_ptr<Mesh> mesh = meshRenderer->GetMesh(meshCount);
+									std::shared_ptr<Animator> animator = node->GetComponent<Animator>();
+									if (animator) {
+										//									std::shared_ptr<BoneTransformTree> boneTree = animator->GetBoneTransformTree();
+										//									if (boneTree) DebugRenderBoneTree(boneTree, node->GetWorldTransform());
+
+										std::vector<glm::mat4> b = animator->GetBoneMatrices();
+										for (size_t i = 0; i < b.size(); i++) {
+											location = glGetUniformLocation(shaderID, (std::string("bones[") + std::to_string(i) + std::string("]")).c_str());
+											if (location >= 0) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(b[i]));
+										}
+
+										location = glGetUniformLocation(shaderID, "useBones");
+										if (location >= 0) glUniform1i(location, true);
 									}
-									
-									location = glGetUniformLocation(shaderID, "useBones");
-									if (location >= 0) glUniform1i(location, true);
-								}
-								else {
-									location = glGetUniformLocation(shaderID, "useBones");
-									if (location >= 0) glUniform1i(location, false);
-								}
-								location = glGetUniformLocation(shaderID, "model");
-								if (location >= 0) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(node->GetWorldTransform()));
-								location = glGetUniformLocation(shaderID, "material.ambient");
-								if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetAmbient()));
-								location = glGetUniformLocation(shaderID, "material.diffuse");
-								if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetDiffuse()));
-								location = glGetUniformLocation(shaderID, "material.specular");
-								if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetSpecular()));
-								location = glGetUniformLocation(shaderID, "material.shininess");
-								if (location >= 0) glUniform1f(location, material.GetShininess());
-								std::vector<std::shared_ptr<Texture>> textures = material.GetTextures();
-								if (!textures.empty()) {
-									if (!useTextures) {
-										useTextures = true;
+									else {
+										location = glGetUniformLocation(shaderID, "useBones");
+										if (location >= 0) glUniform1i(location, false);
+									}
+									location = glGetUniformLocation(shaderID, "model");
+									if (location >= 0) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(node->GetWorldTransform()));
+									location = glGetUniformLocation(shaderID, "material.ambient");
+									if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetAmbient()));
+									location = glGetUniformLocation(shaderID, "material.diffuse");
+									if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetDiffuse()));
+									location = glGetUniformLocation(shaderID, "material.specular");
+									if (location >= 0) glUniform4fv(location, 1, glm::value_ptr(material.GetSpecular()));
+									location = glGetUniformLocation(shaderID, "material.shininess");
+									if (location >= 0) glUniform1f(location, material.GetShininess());
+									std::vector<std::shared_ptr<Texture>> textures = material.GetTextures();
+									if (!textures.empty()) {
+										if (!useTextures) {
+											useTextures = true;
+											location = glGetUniformLocation(shaderID, "useTexture");
+											if (location >= 0) glUniform1i(location, useTextures);
+											glBindTexture(GL_TEXTURE_2D, 0);
+											textureID = 0;
+										}
+										for (std::vector<std::shared_ptr<Texture>>::iterator i = textures.begin(); i != textures.end(); ++i) {
+											std::shared_ptr<Texture> texture = (*i);
+											if (texture) {
+												TextureType type = texture->GetType();
+
+												GLuint tID = context->GetTextureID(texture);
+												if (textureID != tID) {
+													textureID = tID;
+													std::uint32_t typeNo = (std::uint32_t)type;
+													glActiveTexture(GL_TEXTURE0 + typeNo);
+													glBindTexture(GL_TEXTURE_2D, textureID);
+													location = glGetUniformLocation(shaderID, "textureUnit0");
+													glUniform1i(location, 0 + typeNo);
+												}
+											}
+										}
+									}
+									else {
+										useTextures = false;
 										location = glGetUniformLocation(shaderID, "useTexture");
 										if (location >= 0) glUniform1i(location, useTextures);
 										glBindTexture(GL_TEXTURE_2D, 0);
 										textureID = 0;
 									}
-									for (std::vector<std::shared_ptr<Texture>>::iterator i = textures.begin(); i != textures.end(); ++i) {
-										std::shared_ptr<Texture> texture = (*i);
-										if (texture) {
-											TextureType type = texture->GetType();
-
-											GLuint tID = context->GetTextureID(texture);
-											if (textureID != tID) {
-												textureID = tID;
-												std::uint32_t typeNo = (std::uint32_t)type;
-												glActiveTexture(GL_TEXTURE0 + typeNo);
-												glBindTexture(GL_TEXTURE_2D, textureID);
-												location = glGetUniformLocation(shaderID, "textureUnit0");
-												glUniform1i(location, 0 + typeNo);
-											}
-										}
+									GLuint mID = context->GetMeshID(mesh);
+									if (meshID != mID) meshID = mID;
+									if (meshID) {
+										glBindVertexArray(meshID);
+										glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
+										//Debug::PrintImmediately("Rendered Mesh " + std::to_string(meshID), DEBUG_TYPE_SUCCESS);
+										glBindVertexArray(0);
 									}
 								}
-								else {
-									useTextures = false;
-									location = glGetUniformLocation(shaderID, "useTexture");
-									if (location >= 0) glUniform1i(location, useTextures);
-									glBindTexture(GL_TEXTURE_2D, 0);
-									textureID = 0;
-								}
-								GLuint mID = context->GetMeshID(mesh);
-								if (meshID != mID) meshID = mID;
-								if (meshID) {
-									glBindVertexArray(meshID);
-									glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
-									//Debug::PrintImmediately("Rendered Mesh " + std::to_string(meshID), DEBUG_TYPE_SUCCESS);
-									glBindVertexArray(0);
-								}
 							}
+							meshCount++;
 						}
-						meshCount++;
 					}
 				}
+				//debugDraw.Render(cam->GetViewProjection());
 			}
-			//debugDraw.Render(cam->GetViewProjection());
 		}
 	}
 

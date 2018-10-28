@@ -13,10 +13,8 @@ namespace B00289996 {
 	class Camera;
 	class Node;
 	class MeshRenderer;
-	struct CullingResult {
-		std::shared_ptr<Node> camera;
-		std::vector<std::shared_ptr<Node>> visibleNodes;
-	};
+	struct CullingResult;
+
 	class CullingSystem : public ConnectionMananger {
 		friend class Engine;
 	public:

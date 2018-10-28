@@ -5,7 +5,7 @@
 namespace B00289996 {
 	VulkanPipeline::VulkanPipeline() : std::enable_shared_from_this<VulkanPipeline>(), cacheCreated(false){
 	}
-	VulkanPipeline::VulkanPipeline(const std::shared_ptr<VulkanDevice>& device, const std::shared_ptr<VulkanSurface> & surface, const const vk::RenderPass & rPass) : std::enable_shared_from_this<VulkanPipeline>(), cacheCreated(false), dirty(false),
+	VulkanPipeline::VulkanPipeline(const std::shared_ptr<VulkanDevice>& device, const std::shared_ptr<VulkanSurface> & surface, const vk::RenderPass & rPass) : std::enable_shared_from_this<VulkanPipeline>(), cacheCreated(false), dirty(false),
 		cacheUsed(false), pipelineLayout(), viewports(std::vector<vk::Viewport>()), scissors(std::vector<vk::Rect2D>()), pipelineCache(vk::PipelineCache()), dynamicStates({ vk::DynamicState::eViewport, vk::DynamicState::eScissor }), renderPass(rPass) {
 		this->device = device;
 		this->surface = surface;
@@ -14,7 +14,7 @@ namespace B00289996 {
 	VulkanPipeline::~VulkanPipeline() {
 	}
 
-	void VulkanPipeline::SetRenderPass(const const vk::RenderPass & renderPass) {
+	void VulkanPipeline::SetRenderPass(const vk::RenderPass & renderPass) {
 		this->renderPass = renderPass;
 	}
 

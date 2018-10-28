@@ -41,7 +41,7 @@ namespace B00289996 {
 		textures.clear();
 	}
 
-	const std::size_t & Material::GetNumberOfTextures() const {
+	const std::size_t Material::GetNumberOfTextures() const {
 		return textures.size();
 	}
 

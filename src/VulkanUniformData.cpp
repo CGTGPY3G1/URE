@@ -12,6 +12,6 @@ namespace B00289996 {
 	}
 
 	const vk::Device & VulkanUniformData::GetDevice() const {
-		return device ? device->GetDevice() : vk::Device();
+		return device ? device->GetDevice() : nullptr;
 	}
 }

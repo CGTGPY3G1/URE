@@ -10,6 +10,7 @@
 #include "TextParser.h"
 #include "Debug.h"
 #include "Light.h"
+#include "CullingResult.h"
 #include <fstream>
 #include <utility>
 #include <iostream>
@@ -255,6 +256,10 @@ namespace B00289996 {
 			device->SetSwapChain(swapchain);
 			oldScreenWidth = newWidth; oldScreenHeight = newHeight;
 		}
+	}
+
+	void ContextManagerVulkan::AllocateMemory(const std::vector<CullingResult>& cullingResults) {
+
 	}
 
 	std::shared_ptr<VulkanVAO> ContextManagerVulkan::LoadMesh(const std::shared_ptr<Mesh>& mesh) {

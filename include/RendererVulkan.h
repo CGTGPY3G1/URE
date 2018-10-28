@@ -10,7 +10,7 @@ namespace B00289996 {
 	public:
 		RendererVulkan();
 		~RendererVulkan();
-		void Render(const std::vector<std::shared_ptr<Node>>& objects) override;
+		void Render(const std::vector<CullingResult> & cullingResults) override;
 		void BeginRendering() override;
 		void EndRendering() override;
 	protected:

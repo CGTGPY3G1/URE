@@ -15,7 +15,7 @@ namespace B00289996 {
 		RendererOpenGL3();
 		/// <summary>Finalizes an instance of the <see cref="RendererOpenGL3"/> class.</summary>
 		~RendererOpenGL3();
-		void Render(const std::vector<std::shared_ptr<Node>>& objects) override;
+		void Render(const std::vector<CullingResult> & cullingResults) override;
 		void BeginRendering() override;
 		void EndRendering() override;
 	protected:

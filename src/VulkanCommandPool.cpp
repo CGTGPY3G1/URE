@@ -171,7 +171,7 @@ namespace B00289996 {
 	}
 	const vk::CommandBuffer & VulkanCommandPool::GetCommandBuffer(const std::size_t & index) const {
 		if (index < commandBuffers.size()) return commandBuffers[index];
-		return {};
+		return nullptr;
 	}
 	const vk::CommandBuffer & VulkanCommandPool::Switch(const bool & flush) {
 		const std::size_t oldIndex = currentBuffer;

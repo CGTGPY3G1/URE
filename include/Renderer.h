@@ -8,12 +8,13 @@ namespace B00289996 {
 	class Event;
 	class Node;
 	class ContextManager;
+	struct CullingResult;
 	class Renderer : public ConnectionMananger {
 	public:
 		Renderer(const std::shared_ptr<ContextManager> renderContextManager);
 		~Renderer();
 		virtual void BeginRendering() = 0;
-		virtual void Render(const std::vector<std::shared_ptr<Node>> & objects) = 0;
+		virtual void Render(const std::vector<CullingResult> & cullingResults) = 0;
 		virtual void EndRendering() = 0;
 	protected:
 		glm::vec4 clearColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

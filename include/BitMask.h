@@ -6,31 +6,37 @@ namespace B00289996 {
 	struct BitMask {
 		friend struct std::hash<BitMask>;
 	public:
-		BitMask() : mask(std::bitset<std::numeric_limits<std::int_least32_t>::digits>()) {
+		BitMask() : mask(0), lastSet(std::numeric_limits<std::int_least32_t>::digits) {
 			
 		}
-		BitMask(const int_least32_t & position) : mask(std::bitset<std::numeric_limits<std::int_least32_t>::digits>()) {
-			Set(position, false);
+		BitMask(const int_least32_t & position) : mask(0) {
+			lastSet = position;
+			Set(position);
 		}
-		const BitMask Set(const int_least32_t & position, const bool & value = true) {
-			mask.set(position, value);
+		const BitMask Set(const int_least32_t & position) {
+			lastSet = position;
+			mask = 1 << position;
 			return *this;
 		}
-		const bool AnySet() const { return mask.any(); }
-		const bool AllSet() const { return mask.all(); }
-		const bool NoneSet() const { return mask.none(); }
+		const bool AnySet() const { return mask > 0; }
+		const bool AllSet() const { return mask == std::numeric_limits<std::int_least32_t>::max(); }
+		const bool NoneSet() const { return mask == 0; }
+		const unsigned int RelevantBit() const { return lastSet; }
 		const BitMask & Flip() {
-			mask = mask.flip();
+			mask = ~mask;
 			return *this; 
 		}
 
 		const BitMask Flipped() {
 			BitMask bitmask;
 			bitmask.mask = mask;
-			bitmask.mask = bitmask.mask.flip();
+			bitmask.mask = ~bitmask.mask;
 			return bitmask;
 		}
-		const int_least32_t ActiveBits() const { return mask.count(); }
+
+		inline const bool Contains(const BitMask bitmask) const {
+			return (bitmask.mask & mask) == bitmask.mask;
+		}
 		inline const bool operator==(const BitMask & other) const { return mask == other.mask; }
 		inline const bool operator!=(const BitMask & other) const { return mask != other.mask; }
 		inline const void operator=(const BitMask & other) { mask = other.mask; }
@@ -90,14 +96,14 @@ namespace B00289996 {
 		}
 
 		const std::int_least32_t AsNumber() const {
-			return (std::int_least32_t)mask.to_ullong();
+			return mask;
 		}
 		const auto GetMask() {
 			return mask;
 		}
 	private:
-
-		std::bitset<std::numeric_limits<std::int_least32_t>::digits> mask;
+		unsigned int lastSet;
+		std::int_least32_t mask;
 	};
 }
 

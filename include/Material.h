@@ -42,7 +42,7 @@ namespace B00289996 {
 		/// <returns>all textures attached to this material.</returns>
 		const std::vector<std::shared_ptr<Texture>> & GetTextures() const;
 		void RemoveTextures();
-		const std::size_t & GetNumberOfTextures() const;
+		const std::size_t GetNumberOfTextures() const;
 		/// <summary>Gets the ambient value of this material.</summary>
 		/// <returns>the ambient value</returns>
 		const glm::vec4 GetAmbient() const;

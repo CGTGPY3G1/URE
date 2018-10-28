@@ -41,7 +41,7 @@ namespace B00289996 {
 		void FlushCommandBuffer(const std::size_t & index);
 		void FlushCommandBuffers();
 		void QueueMeshes(const std::vector<std::shared_ptr<VulkanVAO>> & VAOs, const std::vector<UniformM> & modelInfo, const std::vector<VulkanMaterial> & materials);
-		template <typename Uniforms> void QueueMeshes(const std::vector<std::shared_ptr<VulkanVAO>> & VAOs, const const std::vector<Uniforms> & constants);
+		template <typename Uniforms> void QueueMeshes(const std::vector<std::shared_ptr<VulkanVAO>> & VAOs, const std::vector<Uniforms> & constants);
 		const vk::CommandPool GetCommandPool() const;
 		const std::vector<vk::CommandBuffer> & GetCommandBuffers() const;
 		const vk::CommandBuffer & GetCommandBuffer(const std::size_t & index) const;
@@ -63,7 +63,7 @@ namespace B00289996 {
 		bool passStarted;
 	};
 	template<typename Uniforms>
-	inline void VulkanCommandPool::QueueMeshes(const std::vector<std::shared_ptr<VulkanVAO>>& VAOs, const const std::vector<Uniforms>& constants) {
+	inline void VulkanCommandPool::QueueMeshes(const std::vector<std::shared_ptr<VulkanVAO>>& VAOs, const std::vector<Uniforms>& constants) {
 		std::uint32_t i = 0;
 		for (const std::shared_ptr<VulkanVAO> & vao : VAOs) {
 			commandBuffers[currentBuffer].pushConstants(pipeline->GetPipelineLayout(), vk::ShaderStageFlagBits::eVertex, 0, sizeof(Uniforms), &constants[i]);

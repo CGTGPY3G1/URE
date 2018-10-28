@@ -5,6 +5,7 @@
 #include "RendererVulkan.h"
 #include "WindowGLFW.h"
 #include "MessagingSystem.h"
+#include "CullingResult.h"
 #include "CullingSystem.h"
 #include "LightingSystem.h"
 #include "WindowFactory.h"
@@ -87,16 +88,9 @@ namespace B00289996 {
 			renderer->BeginRendering();
 			std::uint32_t passes = 0;
 			for (std::vector<CullingResult>::iterator i = results.begin(); i != results.end(); ++i) {
-				std::vector<std::shared_ptr<Node>> toRender = std::vector<std::shared_ptr<Node>>();
-				toRender.reserve((*i).visibleNodes.size() + 1);
-				toRender.push_back((*i).camera);
-				toRender.insert(toRender.end(), lights.begin(), lights.end());
-				toRender.insert(toRender.end(), (*i).visibleNodes.begin(), (*i).visibleNodes.end());
-				if (toRender.size() > 0) passes++;
-				renderer->Render(toRender);
-				//std::cout << (*i).visibleNodes.size() << " Objects and " << lights.size() << " lights rendered by camera " << (*i).camera->GetID() << std::endl;
+				(*i).lights = lights;			
 			}
-			if(passes == 0) renderer->Render(std::vector<std::shared_ptr<Node>>());
+			renderer->Render(results);
 			renderer->EndRendering();
 		}
 	}

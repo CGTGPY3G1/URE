@@ -9,7 +9,7 @@
 #include "ShaderProgram.h"
 #include "IDGenerator.h"
 namespace B00289996 {
-	Node::Node(const std::string & nodeName) : Transformable(nodeName + "Transform"), name(nodeName), enabled(true), componentsDirty(true), components(std::map<std::size_t, std::vector<std::shared_ptr<Component>>>()) {
+	Node::Node(const std::string & nodeName) : Transformable(nodeName + "Transform"), name(nodeName), enabled(true), componentsDirty(true), components(std::vector<std::vector<std::shared_ptr<Component>>>()) {
 		id = IDGenerator<Node, std::uint32_t>::GetInstance().GetNewID();
 	}
 

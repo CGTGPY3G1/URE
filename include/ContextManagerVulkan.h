@@ -16,6 +16,7 @@ namespace B00289996 {
 	class VulkanRenderPass;
 	struct VulkanShader;
 	struct VulkanVAO;
+	struct CullingResult;
 	class ContextManagerVulkan : public ContextManager {
 		friend class RendererVulkan;
 	public:
@@ -43,6 +44,8 @@ namespace B00289996 {
 		void UnregisterMesh(const std::shared_ptr<Mesh>& mesh) override;
 		void UnregisterShader(const std::shared_ptr<ShaderProgram>& shader) override;
 		void AlignScreenSize();
+
+		void AllocateMemory(const std::vector<CullingResult> & cullingResults);
 	private:
 		
 		bool firstBatch = true, lightsBound = false, texturesBound = false, rebuildPipeline = false;

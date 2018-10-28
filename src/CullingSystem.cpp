@@ -5,6 +5,7 @@
 #include "Node.h"
 #include "Camera.h"
 #include "Frustum.h"
+#include "CullingResult.h"
 #include <chrono>
 
 namespace B00289996 {

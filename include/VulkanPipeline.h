@@ -12,9 +12,9 @@ namespace B00289996 {
 		friend class ContextManagerVulkan;
 	public:
 		VulkanPipeline();
-		VulkanPipeline(const std::shared_ptr<VulkanDevice>& device, const std::shared_ptr<VulkanSurface> & surface, const const vk::RenderPass & renderPass);
+		VulkanPipeline(const std::shared_ptr<VulkanDevice>& device, const std::shared_ptr<VulkanSurface> & surface, const vk::RenderPass & renderPass);
 		~VulkanPipeline();
-		void SetRenderPass(const const vk::RenderPass & renderPass);
+		void SetRenderPass(const vk::RenderPass & renderPass);
 		void Construct(const std::vector<std::shared_ptr<VulkanShader>> & shaders, const std::vector<std::shared_ptr<VulkanVAO>> & VAOs, const std::shared_ptr<VulkanPipeline> & oldPipeline = std::shared_ptr<VulkanPipeline>());
 		void Merge(const std::vector<std::shared_ptr<VulkanPipeline>> & pipelines);
 		void Merge(const std::shared_ptr<VulkanPipeline> & pipeline);
